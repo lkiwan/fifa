@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Foot Quiz</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ SETUP ============ -->
+  <section id="screen-setup" class="screen">
+    <div class="logo">&#9917; Foot Quiz</div>
+    <h1>Combien de joueurs ?</h1>
+    <div class="stepper">
+      <button id="minus" class="step-btn">-</button>
+      <span id="playerCount" class="count">3</span>
+      <button id="plus" class="step-btn">+</button>
+    </div>
+    <div id="names" class="names"></div>
+    <button id="startBtn" class="btn primary">Commencer la partie</button>
+    <p id="setupError" class="error"></p>
+  </section>
+
+  <!-- ============ TURN (question) ============ -->
+  <section id="screen-turn" class="screen hidden">
+    <div class="turn-banner">
+      <span class="banner-label">&#128241; C'est le tour de</span>
+      <span id="turnUserName" class="banner-name"></span>
+    </div>
+    <div class="card player-card">
+      <img id="playerPhoto" class="player-photo" alt="photo" />
+      <h2 id="playerName" class="player-name"></h2>
+    </div>
+    <div id="questions"></div>
+    <button id="submitBtn" class="btn primary hidden">Valider mes réponses</button>
+    <p id="turnError" class="error"></p>
+  </section>
+
+  <!-- ============ PASS PHONE ============ -->
+  <section id="screen-pass" class="screen hidden">
+    <div class="card center-card">
+      <div class="big-handoff">&#128241;</div>
+      <h1>Donne le téléphone à</h1>
+      <h2 id="passName" class="pass-name"></h2>
+      <p class="sub">Il voit les mêmes questions. Les bonnes réponses seront révélées à la fin !</p>
+      <button id="passBtn" class="btn primary">J'ai le téléphone</button>
+    </div>
+  </section>
+
+  <!-- ============ REVEAL ============ -->
+  <section id="screen-reveal" class="screen hidden">
+    <div class="reveal-head">
+      <h1 id="revealTitle"></h1>
+      <div class="card reveal-player">
+        <img id="revealPhoto" class="player-photo small" alt="photo" />
+        <h2 id="revealPlayerName"></h2>
+      </div>
+    </div>
+    <div id="revealBody"></div>
+    <button id="revealNextBtn" class="btn primary">Suivant</button>
+  </section>
+
+  <!-- ============ WINNER ============ -->
+  <section id="screen-winner" class="screen hidden">
+    <div class="card center-card winner-card">
+      <div class="trophy">&#127942;</div>
+      <h1>Le grand vainqueur</h1>
+      <h2 id="winnerName" class="winner-name"></h2>
+      <button id="newGameBtn" class="btn primary">Nouvelle partie</button>
+    </div>
+  </section>
+
+  <div id="loading" class="loading hidden">Chargement…</div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

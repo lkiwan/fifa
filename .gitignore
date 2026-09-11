@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+output/
+.env
+.env.*
+!.env.example
+.pytest_cache/
+*.logsfv.txt
