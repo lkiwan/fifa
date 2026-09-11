@@ -29,15 +29,30 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
+_flare_session_id = None
+
+
+def _flare_ensure_session():
+    global _flare_session_id
+    if _flare_session_id or not FLARESOLVERR_URL:
+        return
+    try:
+        resp = requests.post(f"{FLARESOLVERR_URL}/v1", json={"cmd": "sessions.create", "session": "tm"}, timeout=30)
+        _flare_session_id = "tm"
+        print("  FlareSolverr session created")
+    except Exception as e:
+        print(f"  FlareSolverr session error: {e}")
+
+
 def _flare_get(url, timeout=60):
     if not FLARESOLVERR_URL:
         return None
+    _flare_ensure_session()
+    payload = {"cmd": "request.get", "url": url, "maxTimeout": timeout * 1000, "userAgent": HEADERS["User-Agent"]}
+    if _flare_session_id:
+        payload["session"] = _flare_session_id
     try:
-        resp = requests.post(
-            f"{FLARESOLVERR_URL}/v1",
-            json={"cmd": "request.get", "url": url, "maxTimeout": timeout * 1000, "userAgent": HEADERS["User-Agent"]},
-            timeout=timeout,
-        )
+        resp = requests.post(f"{FLARESOLVERR_URL}/v1", json=payload, timeout=timeout)
         data = resp.json()
         sol = data.get("solution", {})
         code = sol.get("status", 0)
@@ -63,14 +78,14 @@ def get_page(url, retries=3):
                 time.sleep(wait)
                 continue
             print(f"  HTTP {resp.status_code} for {url}")
-            if attempt == retries - 1:
-                flare = _flare_get(url)
-                if flare:
-                    return flare
-            return None
+            break
         except requests.RequestException as e:
             print(f"  Request error: {e}")
             time.sleep(5)
+
+    flare = _flare_get(url)
+    if flare:
+        return flare
     return None
 
 
