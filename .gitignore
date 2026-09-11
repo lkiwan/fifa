@@ -7,4 +7,5 @@ output/
 .env.*
 !.env.example
 .pytest_cache/
-*.logsfv.txt
+*.log
+sfv.txt
