@@ -22,15 +22,21 @@ services:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/fifa
       DAILY_SCRAPE_HOUR: "22"
       DAILY_SCRAPE_MINUTE: "0"
-      FLARESOLVERR_URL: http://host.docker.internal:8191
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      FLARESOLVERR_URL: http://atw_flaresolverr:8191
     ports:
       - "8080:8000"
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - default
+      - atw_net
+
+networks:
+  atw_net:
+    external: true
+    name: pfe-project_atw_net
 
 volumes:
   pgdata:
