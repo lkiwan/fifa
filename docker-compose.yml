@@ -22,8 +22,11 @@ services:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/fifa
       DAILY_SCRAPE_HOUR: "22"
       DAILY_SCRAPE_MINUTE: "0"
+      FLARESOLVERR_URL: http://host.docker.internal:8191
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
-      - "8001:8000"
+      - "8080:8000"
     depends_on:
       db:
         condition: service_healthy

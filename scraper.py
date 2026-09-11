@@ -18,6 +18,8 @@ HEADERS = {
     "Connection": "keep-alive",
 }
 
+FLARESOLVERR_URL = os.environ.get("FLARESOLVERR_URL")
+
 LIST_URL = (
     "https://www.transfermarkt.fr/spieler-statistik/wertvollstespieler/"
     "marktwertetop?page={page}"
@@ -27,11 +29,33 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
+def _flare_get(url, timeout=60):
+    if not FLARESOLVERR_URL:
+        return None
+    try:
+        resp = requests.post(
+            f"{FLARESOLVERR_URL}/v1",
+            json={"cmd": "request.get", "url": url, "maxTimeout": timeout * 1000, "userAgent": HEADERS["User-Agent"]},
+            timeout=timeout,
+        )
+        data = resp.json()
+        sol = data.get("solution", {})
+        code = sol.get("status", 0)
+        html = sol.get("response", "")
+        if code == 200 and len(html) > 100:
+            return BeautifulSoup(html, "html.parser")
+        print(f"  FlareSolverr returned status={code} len={len(html)}")
+        return None
+    except Exception as e:
+        print(f"  FlareSolverr error: {e}")
+        return None
+
+
 def get_page(url, retries=3):
     for attempt in range(retries):
         try:
             resp = session.get(url, timeout=15, verify=False)
-            if resp.status_code == 200:
+            if resp.status_code == 200 and len(resp.text) > 100:
                 return BeautifulSoup(resp.text, "html.parser")
             if resp.status_code == 429:
                 wait = 10 * (attempt + 1)
@@ -39,6 +63,10 @@ def get_page(url, retries=3):
                 time.sleep(wait)
                 continue
             print(f"  HTTP {resp.status_code} for {url}")
+            if attempt == retries - 1:
+                flare = _flare_get(url)
+                if flare:
+                    return flare
             return None
         except requests.RequestException as e:
             print(f"  Request error: {e}")
